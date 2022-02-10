@@ -1,34 +1,19 @@
 package shortages;
 
-import entities.ProductionEntity;
-
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Map;
 
 public class ProductionOutputs {
     private final String productRefNo;
-    private final Map<LocalDate, List<ProductionEntity>> outputs;
+    private final Map<LocalDate, Long> outputs;
 
-    public ProductionOutputs(List<ProductionEntity> productions) {
-        HashMap<LocalDate, List<ProductionEntity>> outputs = new HashMap<>();
-        String productRefNo = null;
-        for (ProductionEntity production : productions) {
-            if (!outputs.containsKey(production.getStart().toLocalDate())) {
-                outputs.put(production.getStart().toLocalDate(), new ArrayList<>());
-            }
-            outputs.get(production.getStart().toLocalDate()).add(production);
-            productRefNo = production.getForm().getRefNo();
-        }
+    public ProductionOutputs(String productRefNo, Map<LocalDate, Long> outputs) {
         this.productRefNo = productRefNo;
-        this.outputs = Collections.unmodifiableMap(outputs);
+        this.outputs = outputs;
     }
 
     long outputsFor(LocalDate day) {
-        long level = 0;
-        for (ProductionEntity production : outputs.get(day)) {
-            level += production.getOutput();
-        }
-        return level;
+        return outputs.getOrDefault(day, 0L);
     }
 
     String getProductRefNo() {
