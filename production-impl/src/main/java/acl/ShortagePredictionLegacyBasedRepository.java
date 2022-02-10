@@ -3,10 +3,8 @@ package acl;
 import entities.DemandEntity;
 import entities.ProductionEntity;
 import external.CurrentStock;
-import shortages.Demands;
-import shortages.ProductionOutputs;
-import shortages.ShortagePrediction;
-import shortages.ShortagePredictionRepository;
+import shortages.*;
+import tools.Util;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -14,8 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 class ShortagePredictionLegacyBasedRepository implements ShortagePredictionRepository {
     private CurrentStock stock;
@@ -36,8 +33,19 @@ class ShortagePredictionLegacyBasedRepository implements ShortagePredictionRepos
 
         ProductionOutputs outputs = createProductionOutputs();
 
-        Demands demandsPerDay = new Demands(demands);
+        Demands demandsPerDay = createDemands();
         return new ShortagePrediction(stock, dates, outputs, demandsPerDay);
+    }
+
+    private Demands createDemands() {
+        return new Demands(demands.stream()
+                .collect(toUnmodifiableMap(
+                        DemandEntity::getDay,
+                        demand -> Demands.daily(
+                                Util.getLevel(demand),
+                                LevelOnDeliveryPick.pickStrategyVariant(Util.getDeliverySchema(demand))
+                        ))
+                ));
     }
 
     private ProductionOutputs createProductionOutputs() {

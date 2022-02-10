@@ -12,7 +12,7 @@ public class LevelOnDeliveryPick {
             DeliverySchema.every3hours, LevelOnDeliveryCalculation.notImplemented
     );
 
-    static LevelOnDeliveryCalculation pickStrategyVariant(DeliverySchema deliverySchema) {
+    public static LevelOnDeliveryCalculation pickStrategyVariant(DeliverySchema deliverySchema) {
         return mapping.getOrDefault(deliverySchema, LevelOnDeliveryCalculation.notImplemented);
     }
 }
