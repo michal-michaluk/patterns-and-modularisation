@@ -23,7 +23,7 @@ public class ProductionOutputs {
         this.outputs = Collections.unmodifiableMap(outputs);
     }
 
-    public long outputsFor(LocalDate day) {
+    long outputsFor(LocalDate day) {
         long level = 0;
         for (ProductionEntity production : outputs.get(day)) {
             level += production.getOutput();
@@ -31,7 +31,7 @@ public class ProductionOutputs {
         return level;
     }
 
-    public String getProductRefNo() {
+    String getProductRefNo() {
         return productRefNo;
     }
 }

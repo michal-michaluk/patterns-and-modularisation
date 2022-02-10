@@ -20,31 +20,31 @@ public class Demands {
         this.demandsPerDay = Collections.unmodifiableMap(demandsPerDay);
     }
 
-    public boolean hasNoDemand(LocalDate day) {
+    boolean hasNoDemand(LocalDate day) {
         return !demandsPerDay.containsKey(day);
     }
 
-    public DailyDemand get(LocalDate day) {
+    DailyDemand get(LocalDate day) {
         if (demandsPerDay.containsKey(day)) {
             return new DailyDemand(demandsPerDay.get(day));
         }
         return null;
     }
 
-    public static class DailyDemand {
+    static class DailyDemand {
         private final long level;
         private final LevelOnDeliveryCalculation calculation;
 
-        public DailyDemand(DemandEntity demand) {
+        DailyDemand(DemandEntity demand) {
             this.level = Util.getLevel(demand);
             this.calculation = LevelOnDeliveryPick.pickStrategyVariant(Util.getDeliverySchema(demand));
         }
 
-        public long getLevel() {
+        long getLevel() {
             return level;
         }
 
-        public long levelOnDelivery(long level, long produced) {
+        long levelOnDelivery(long level, long produced) {
             return calculation.levelOnDelivery(level, produced, getLevel());
         }
     }
