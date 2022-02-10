@@ -1,7 +1,6 @@
 package shortages;
 
 import entities.DemandEntity;
-import enums.DeliverySchema;
 import tools.Util;
 
 import java.time.LocalDate;
@@ -34,33 +33,19 @@ public class Demands {
 
     public static class DailyDemand {
         private final long level;
-        private final DeliverySchema schema;
+        private final LevelOnDeliveryCalculation calculation;
 
         public DailyDemand(DemandEntity demand) {
             this.level = Util.getLevel(demand);
-            this.schema = Util.getDeliverySchema(demand);
+            this.calculation = LevelOnDeliveryPick.pickStrategyVariant(Util.getDeliverySchema(demand));
         }
 
         public long getLevel() {
             return level;
         }
 
-        private DeliverySchema getDeliverySchema() {
-            return schema;
-        }
-
         public long levelOnDelivery(long level, long produced) {
-            if (getDeliverySchema() == DeliverySchema.atDayStart) {
-                return level - getLevel();
-            } else if (getDeliverySchema() == DeliverySchema.tillEndOfDay) {
-                return level - getLevel() + produced;
-            } else if (getDeliverySchema() == DeliverySchema.every3hours) {
-                // TODO WTF ?? we need to rewrite that app :/
-                throw new UnsupportedOperationException();
-            } else {
-                // TODO implement other variants
-                throw new UnsupportedOperationException();
-            }
+            return calculation.levelOnDelivery(level, produced, getLevel());
         }
     }
 }
