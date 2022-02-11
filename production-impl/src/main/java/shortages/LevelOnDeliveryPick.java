@@ -4,7 +4,7 @@ import enums.DeliverySchema;
 
 import java.util.Map;
 
-public class LevelOnDeliveryPick {
+class LevelOnDeliveryPick {
 
     private final static Map<DeliverySchema, LevelOnDeliveryCalculation> mapping = Map.of(
             DeliverySchema.atDayStart, LevelOnDeliveryCalculation.atDayStart,
@@ -12,7 +12,7 @@ public class LevelOnDeliveryPick {
             DeliverySchema.every3hours, LevelOnDeliveryCalculation.notImplemented
     );
 
-    public static LevelOnDeliveryCalculation pickStrategyVariant(DeliverySchema deliverySchema) {
+    static LevelOnDeliveryCalculation pickStrategyVariant(DeliverySchema deliverySchema) {
         return mapping.getOrDefault(deliverySchema, LevelOnDeliveryCalculation.notImplemented);
     }
 }

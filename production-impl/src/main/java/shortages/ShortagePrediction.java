@@ -3,13 +3,15 @@ package shortages;
 import java.time.LocalDate;
 import java.util.List;
 
-public class ShortagePrediction {
+class ShortagePrediction {
+    private final String productRefNo;
     private final WarehouseStock stock;
     private final List<LocalDate> dates;
     private final ProductionOutputs outputs;
     private final Demands demandsPerDay;
 
-    public ShortagePrediction(WarehouseStock stock, List<LocalDate> dates, ProductionOutputs outputs, Demands demandsPerDay) {
+    ShortagePrediction(String productRefNo, WarehouseStock stock, List<LocalDate> dates, ProductionOutputs outputs, Demands demandsPerDay) {
+        this.productRefNo = productRefNo;
         this.stock = stock;
         this.dates = dates;
         this.outputs = outputs;
@@ -18,7 +20,7 @@ public class ShortagePrediction {
 
     Shortages predict() {
         long level = stock.level();
-        Shortages shortages = Shortages.builder(outputs.getProductRefNo());
+        Shortages shortages = Shortages.builder(productRefNo);
         for (LocalDate day : dates) {
             if (demandsPerDay.hasNoDemand(day)) {
                 level += outputs.outputsFor(day);
@@ -37,7 +39,7 @@ public class ShortagePrediction {
         return shortages;
     }
 
-    public long getLockedPartsOnStock() {
+    long getLockedPartsOnStock() {
         return stock.locked();
     }
 }

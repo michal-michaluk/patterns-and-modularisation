@@ -1,4 +1,4 @@
 package shortages;
 
-public record WarehouseStock(long level, long locked) {
+record WarehouseStock(long level, long locked) {
 }

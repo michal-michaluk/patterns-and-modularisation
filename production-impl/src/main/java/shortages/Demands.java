@@ -3,14 +3,14 @@ package shortages;
 import java.time.LocalDate;
 import java.util.Map;
 
-public class Demands {
+class Demands {
     Map<LocalDate, DailyDemand> demandsPerDay;
 
-    public Demands(Map<LocalDate, DailyDemand> demands) {
+    Demands(Map<LocalDate, DailyDemand> demands) {
         demandsPerDay = demands;
     }
 
-    public static DailyDemand daily(long level, LevelOnDeliveryCalculation calculation) {
+    static DailyDemand daily(long level, LevelOnDeliveryCalculation calculation) {
         return new DailyDemand(level, calculation);
     }
 
@@ -22,7 +22,7 @@ public class Demands {
         return demandsPerDay.getOrDefault(day, null);
     }
 
-    public static class DailyDemand {
+    static class DailyDemand {
         private final long level;
         private final LevelOnDeliveryCalculation calculation;
 

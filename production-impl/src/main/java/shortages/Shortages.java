@@ -9,12 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 @EqualsAndHashCode
-public class Shortages {
+class Shortages {
     private final String productRefNo;
     private final List<ShortageEntity> shortages = new LinkedList<>();
     private final Clock clock;
 
-    public static Shortages builder(String productRefNo) {
+    static Shortages builder(String productRefNo) {
         return new Shortages(productRefNo, Clock.systemDefaultZone());
     }
 
@@ -23,7 +23,7 @@ public class Shortages {
         this.clock = clock;
     }
 
-    public void missing(LocalDate day, long levelOnDelivery) {
+    void missing(LocalDate day, long levelOnDelivery) {
         ShortageEntity entity = new ShortageEntity();
         entity.setRefNo(productRefNo);
         entity.setFound(LocalDate.now(clock));
@@ -32,7 +32,7 @@ public class Shortages {
         shortages.add(entity);
     }
 
-    public List<ShortageEntity> build() {
+    List<ShortageEntity> build() {
         return shortages;
     }
 }

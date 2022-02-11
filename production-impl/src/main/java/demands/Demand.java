@@ -9,18 +9,18 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Demand {
+class Demand {
     private DemandEntity demand;
     List<Object> events;
     private Clock clock;
 
-    public Demand(DemandEntity demand, List<Object> events, Clock clock) {
+    Demand(DemandEntity demand, List<Object> events, Clock clock) {
         this.demand = demand;
         this.events = events;
         this.clock = clock;
     }
 
-    public void adjust(AdjustDemandDto adjustment) {
+    void adjust(AdjustDemandDto adjustment) {
         if (adjustment.getAtDay().isBefore(LocalDate.now(clock))) {
             return; // TODO it is UI issue or reproduced post
         }
