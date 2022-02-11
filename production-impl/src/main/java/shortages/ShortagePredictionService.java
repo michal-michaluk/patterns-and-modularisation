@@ -26,6 +26,7 @@ public class ShortagePredictionService {
         this.repository = repository;
     }
 
+
     public void processShortagesFromLogistic(String productRefNo) {
         LocalDate today = LocalDate.now(clock);
         ShortagePrediction prediction = repository.get(productRefNo, today, confShortagePredictionDaysAhead);

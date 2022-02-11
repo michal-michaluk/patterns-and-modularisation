@@ -1,23 +1,13 @@
-package services.impl;
+package demands;
 
 import api.AdjustDemandDto;
 import api.LogisticService;
 import api.StockForecastDto;
-import dao.DemandDao;
-import entities.DemandEntity;
-import entities.ManualAdjustmentEntity;
-import shortages.ShortagePredictionService;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.LinkedList;
 
 public class LogisticServiceImpl implements LogisticService {
 
     //Inject all
-    private DemandDao demandDao;
-    private ShortagePredictionService shortages;
-    private Clock clock;
+    private DemandRepository repository;
 
     /**
      * <pre>
@@ -40,23 +30,13 @@ public class LogisticServiceImpl implements LogisticService {
     //Transactional
     @Override
     public void adjustDemand(AdjustDemandDto adjustment) {
-        if (adjustment.getAtDay().isBefore(LocalDate.now(clock))) {
-            return; // TODO it is UI issue or reproduced post
-        }
-        DemandEntity demand = demandDao.getCurrent(adjustment.getProductRefNo(), adjustment.getAtDay());
+        Demand demand = repository.get(demandId(adjustment));
+        demand.adjust(adjustment);
+        repository.save(demand);
+    }
 
-        ManualAdjustmentEntity manualAdjustment = new ManualAdjustmentEntity();
-        manualAdjustment.setLevel(adjustment.getLevel());
-        manualAdjustment.setNote(adjustment.getNote());
-        manualAdjustment.setDeliverySchema(adjustment.getDeliverySchema());
-
-        if (demand.getAdjustment() == null) {
-            demand.setAdjustment(new LinkedList<>());
-        }
-        demand.getAdjustment().add(manualAdjustment);
-        // TODO REFACTOR: introduce domain event DemandManuallyAdjusted
-
-        shortages.processShortagesFromLogistic(adjustment.getProductRefNo());
+    private DemandId demandId(AdjustDemandDto adjustment) {
+        return new DemandId(adjustment.getProductRefNo(), adjustment.getAtDay());
     }
 
     /**

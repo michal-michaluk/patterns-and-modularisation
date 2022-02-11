@@ -1,13 +1,12 @@
 package acl;
 
-import dao.DemandDao;
-import dao.ProductionDao;
-import entities.DemandEntity;
-import entities.ProductionEntity;
+import demands.DemandDto;
+import demands.DemandsReads;
 import external.CurrentStock;
 import external.StockService;
+import production.OutputDto;
+import production.ProductionReads;
 import shortages.*;
-import tools.Util;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -18,14 +17,14 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.*;
 
 class ShortagePredictionLegacyBasedRepository implements ShortagePredictionRepository {
-    private final DemandDao demandDao;
+    private final DemandsReads demands;
+    private final ProductionReads productions;
     private final StockService stockService;
-    private final ProductionDao productionDao;
 
-    public ShortagePredictionLegacyBasedRepository(DemandDao demandDao, StockService stockService, ProductionDao productionDao) {
-        this.demandDao = demandDao;
+    public ShortagePredictionLegacyBasedRepository(DemandsReads demands, ProductionReads productions, StockService stockService) {
+        this.demands = demands;
+        this.productions = productions;
         this.stockService = stockService;
-        this.productionDao = productionDao;
     }
 
     @Override
@@ -46,24 +45,23 @@ class ShortagePredictionLegacyBasedRepository implements ShortagePredictionRepos
     }
 
     private Demands createDemands(LocalDate today, String productRefNo) {
-        List<DemandEntity> demands = demandDao.findFrom(today.atStartOfDay(), productRefNo);
-        return new Demands(demands.stream()
-                .collect(toUnmodifiableMap(
-                        DemandEntity::getDay,
-                        demand -> Demands.daily(
-                                Util.getLevel(demand),
-                                LevelOnDeliveryPick.pickStrategyVariant(Util.getDeliverySchema(demand))
-                        ))
-                ));
+        return new Demands(
+                demands.getDemandsApi(productRefNo, today).stream()
+                        .collect(toUnmodifiableMap(
+                                DemandDto::date,
+                                demand -> Demands.daily(
+                                        demand.demand(),
+                                        LevelOnDeliveryPick.pickStrategyVariant(demand.schema())
+                                ))
+                        ));
     }
 
     private ProductionOutputs createProductionOutputs(String productRefNo, LocalDate today) {
-        List<ProductionEntity> productions = productionDao.findFromTime(productRefNo, today.atStartOfDay());
         return new ProductionOutputs(productRefNo, Collections.unmodifiableMap(
-                productions.stream()
+                productions.getOutputs(productRefNo, today).stream()
                         .collect(groupingBy(
-                                production -> production.getStart().toLocalDate(),
-                                Collectors.summingLong(ProductionEntity::getOutput)
+                                OutputDto::date,
+                                Collectors.summingLong(OutputDto::output)
                         ))
         ));
     }
