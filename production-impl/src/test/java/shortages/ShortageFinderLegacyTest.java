@@ -1,4 +1,4 @@
-package tools;
+package shortages;
 
 import entities.*;
 import enums.DeliverySchema;
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
-public class ShortageFinderTest {
+public class ShortageFinderLegacyTest {
 
     AtomicLong ids = new AtomicLong(0);
     private LocalDate date = LocalDate.now();
@@ -25,7 +25,7 @@ public class ShortageFinderTest {
     public void findShortages() {
         CurrentStock stock = new CurrentStock(1000, 200);
         print(stock);
-        List<ShortageEntity> shortages = ShortageFinder.findShortages(
+        List<ShortageEntity> shortages = ShortageFinderLegacy.findShortages(
                 date.plusDays(1), 7,
                 stock,
                 productions(

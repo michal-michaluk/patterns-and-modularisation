@@ -3,5 +3,5 @@ package shortages;
 import java.time.LocalDate;
 
 public interface ShortagePredictionRepository {
-    ShortagePrediction get(LocalDate today, int daysAhead);
+    ShortagePrediction get(String productRefNo, LocalDate today, int daysAhead);
 }
