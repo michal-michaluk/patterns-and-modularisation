@@ -3,6 +3,7 @@ package demands;
 import api.AdjustDemandDto;
 import entities.DemandEntity;
 import entities.ManualAdjustmentEntity;
+import tools.Util;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -34,6 +35,10 @@ class Demand {
         }
         demand.getAdjustment().add(manualAdjustment);
 
-        events.add(new DemandAdjusted(adjustment.getProductRefNo()));
+        events.add(new DemandAdjusted(
+                adjustment.getProductRefNo(),
+                Util.getLevel(demand),
+                Util.getDeliverySchema(demand)
+        ));
     }
 }

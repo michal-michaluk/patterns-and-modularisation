@@ -1,4 +1,9 @@
 package demands;
 
-public record DemandAdjusted(String productRefNo) {
+import enums.DeliverySchema;
+
+public record DemandAdjusted(
+        String productRefNo,
+        long level,
+        DeliverySchema deliverySchema) {
 }
